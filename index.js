@@ -1,11 +1,15 @@
+#! /usr/bin/env node
+
 import chalk from "chalk";
 import fs from "fs-extra";
+import {} from "os";
 import inquirer from "inquirer";
 import {} from "nanospinner";
 import path from "path";
 import url from "url";
 import controller from "./templates/controller.js";
 import service from "./templates/service.js";
+import { program } from "commander";
 
 console.log(chalk.blue("Express CRUD Generator..."));
 
@@ -64,11 +68,9 @@ Use Strings with no Spaces. eg, Users or roles_permissions`;
   // console.clear();
 }
 
-await askParameters();
-
 async function createFiles(esm) {
   try {
-    const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+    const __dirname = process.cwd();
 
     let modulePath = path.join(__dirname, module.name);
     let controllerPath = path.join(modulePath, `${module.name}.controller.js`);
@@ -92,4 +94,13 @@ async function createFiles(esm) {
   }
 }
 
-await createFiles(module.esm);
+async function generate() {
+  await askParameters();
+  await createFiles(module.esm);
+}
+
+// await generate();
+
+program.name("crud-gen");
+program.command("g").action(generate);
+program.parse();
